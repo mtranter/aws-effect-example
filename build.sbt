@@ -13,6 +13,7 @@ lazy val root = (project in file("."))
     Assembly.settings,
     libraryDependencies ++= Seq(
       http4sLambda,
+      dynamoDB,
       scalaTest % Test
     )
   )
