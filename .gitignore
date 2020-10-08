@@ -4,3 +4,4 @@ target/
 .serverless
 .vscode
 project/project
+.bsp

@@ -34,6 +34,7 @@ object Common {
         "-Xlint:unused",                 // TODO check if we still need -Wunused below
         "-Xlint:nonlocal-return",        // A return statement used an exception for flow control.
         "-Xlint:implicit-not-found",     // Check @implicitNotFound and @implicitAmbiguous messages.
+        "-Xlint:implicit-recursion",     // Warn when an implicit resolves to an enclosing self-definition.
         "-Xlint:serial",                 // @SerialVersionUID on traits and non-serializable classes.
         "-Xlint:valpattern",             // Enable pattern checks in val definitions.
         "-Xlint:eta-zero",               // Warn on eta-expansion (rather than auto-application) of zero-ary method.
@@ -44,7 +45,6 @@ object Common {
         "-Wmacros:both",                 // Lints code before and after applying a macro
         "-Wnumeric-widen",               // Warn when numerics are widened.
         "-Woctal-literal",               // Warn on obsolete octal syntax.
-        "-Wself-implicit",               // Warn when an implicit resolves to an enclosing self-definition.
         "-Wunused:imports",              // Warn if an import selector is not referenced.
         "-Wunused:patvars",              // Warn if a variable bound in a pattern is unused.
         "-Wunused:privates",             // Warn if a private member is unused.
