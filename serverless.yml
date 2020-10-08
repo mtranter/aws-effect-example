@@ -1,0 +1,19 @@
+service: serverless-scala
+
+provider:
+    name: aws
+    runtime: java11
+
+package:
+    artifact: 'target/scala-2.13/lambda.jar'
+  
+functions:
+    api:
+        handler: com.engitano.serverless.HelloWorldLambda
+        events:
+            - http:
+                path: /
+                method: ANY
+            - http:
+                path: /{any+} 
+                method: ANY
