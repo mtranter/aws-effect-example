@@ -1,0 +1,71 @@
+service: serverless-scala
+
+provider:
+    name: aws
+    runtime: java8
+    region: ap-southeast-2
+
+package:
+    artifact: 'target/scala-2.13/proguard/aws-effect-example_2.13-0.1.0-SNAPSHOT.jar'
+
+# layers:
+#     dependencies:
+#         path: java/lib
+#         package:
+#             artifact: 'target/scala-2.13/dependencies.jar'
+
+functions:
+    api:
+        handler: com.engitano.serverless.channels.Channels
+        # layers:
+        #   - { Ref: DependenciesLambdaLayer }
+        events:
+            - http:
+                path: /
+                method: ANY
+                cors:
+                  origin: '*'
+                  headers:
+                    - Content-Type
+                    - X-Amz-Date
+                    - Authorization
+                    - X-Api-Key
+                    - X-Amz-Security-Token
+                    - X-Amz-User-Agent
+                  allowCredentials: true
+                authorizer:
+                    name: authorizerFunc
+                    resultTtlInSeconds: 300
+                    identitySource: method.request.header.Authorization
+                    type: token
+            - http:
+                path: /{any+} 
+                method: ANY
+                cors:
+                  origin: '*'
+                  headers:
+                    - Content-Type
+                    - X-Amz-Date
+                    - Authorization
+                    - X-Api-Key
+                    - X-Amz-Security-Token
+                    - X-Amz-User-Agent
+                  allowCredentials: true
+                authorizer:
+                    name: authorizerFunc
+                    resultTtlInSeconds: 300
+                    identitySource: method.request.header.Authorization
+                    type: token
+    authorizerFunc:
+        handler: com.engitano.serverless.auth.Authorizer
+resources:
+  Resources:
+    GatewayResponseDefault4XX:
+      Type: 'AWS::ApiGateway::GatewayResponse'
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+        ResponseType: DEFAULT_4XX
+        RestApiId:
+          Ref: 'ApiGatewayRestApi'

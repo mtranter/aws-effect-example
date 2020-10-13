@@ -1,0 +1,21 @@
+{
+	"folders": [
+		{
+			"name": "API",
+			"path": "api"
+		},
+		{
+			"name": "Frontend",
+			"path": "frontend"
+		},
+		{
+			"name": "Root",
+			"path": "."
+		}
+	],
+	"settings": {
+		"files.watcherExclude": {
+			"**/target": true
+		}
+	}
+}
