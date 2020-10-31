@@ -1,4 +1,4 @@
-FROM hseeberger/scala-sbt:11.0.8_1.4.0_2.13.3
+FROM hseeberger/scala-sbt:8u265_1.3.13_2.13.3
 WORKDIR /build
 
 deps:
@@ -15,4 +15,4 @@ build:
 deploy:
     FROM +deps
 	COPY src src
-	RUN sbt assembly
+	RUN sbt proguard:proguard

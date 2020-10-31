@@ -7,6 +7,7 @@ import org.http4s.dsl.io._
 import org.http4s.{ HttpRoutes }
 import io.chrisdavenport.vault.Key
 import com.engitano.awseffect.lambda.http4s.LambdaRequestParams
+import org.http4s.server.middleware.{ CORS, CORSConfig }
 
 object Routes {
   def apply(): HttpRoutes[IO] =

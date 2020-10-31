@@ -9,11 +9,12 @@ object Dependencies {
 
   object Versions {
     val awsEffectV  = "0.2.58"
-    val dynamoDBV   = "0.2.98"
+    val dynamoDBV   = "0.3.107"
     val jwtV        = "4.2.0"
     val auth0V      = "0.13.0"
     val scalaTestV  = "3.2.2"
     val httpClientV = "0.21.0"
+    val circeV      = "0.13.0"
   }
 
   import Versions._
@@ -25,6 +26,7 @@ object Dependencies {
   val dynamoDB     = "com.engitano"  %% "dynamo-f"                 % dynamoDBV
   val jwk          = "com.auth0"      % "jwks-rsa"                 % auth0V
   val jwt          = "com.pauldijou" %% "jwt-circe"                % jwtV
+  val circe        = "io.circe"      %% "circe-refined"            % circeV
 
   val scalaTest = "org.scalatest" %% "scalatest" % scalaTestV
 }

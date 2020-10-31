@@ -17,22 +17,15 @@ lazy val root = (project in file("."))
       dynamoDB,
       jwt,
       jwk,
+      circe,
       http4sCirce,
       http4sServer,
       httpClient,
       scalaTest % Test
     ),
-    // proguardOptions in Proguard += "-dontoptimize",
-    // proguardOptions in Proguard ++= Seq("-dontnote", "-dontwarn", "-ignorewarnings"),
-    // proguardInputs in Proguard := (dependencyClasspath in Compile).value.files,
-    // proguardFilteredInputs in Proguard ++= ProguardOptions.noFilter((packageBin in Compile).value),
-    // proguardOptions in Proguard += ProguardOptions.keepMain("com.engitano.serverless.channels.Channels"),
-    // javaOptions in (Proguard, proguard) := Seq("-Xmx2G"),
     addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.11.0" cross CrossVersion.full)
   ).enablePlugins(SbtProguard)
   .settings(
-    // https://www.guardsquare.com/en/proguard/manual/introduction
-    // https://www.guardsquare.com/en/proguard/manual/examples
     javaOptions in (Proguard, proguard) := Seq("-Xmx10g"),
     proguardInputs in Proguard := (dependencyClasspath in Compile).value.files, 
     proguardFilteredInputs in Proguard ++= ProguardOptions.noFilter((packageBin in Compile).value),

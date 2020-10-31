@@ -1,0 +1,24 @@
+FROM node:12-stretch
+
+deps:
+    COPY ./package.json ./
+    COPY ./yarn.lock ./
+    RUN yarn install
+    SAVE ARTIFACT ./package.json
+    SAVE ARTIFACT ./yarn.lock
+    SAVE ARTIFACT ./node_modules ./node_modules 
+
+
+
+utest:
+    FROM +deps
+    COPY --dir ./src ./
+    COPY --dir ./public ./
+    COPY ./tsconfig.json ./
+    RUN yarn test
+
+package:
+    FROM +utest
+    RUN yarn build
+    SAVE ARTIFACT ./build ./build
+    SAVE ARTIFACT ./output.json ./output.json

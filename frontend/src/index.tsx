@@ -1,21 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
-import { Auth0Provider } from '@auth0/auth0-react';
+import { App } from './App';
 import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
   <React.StrictMode>
-      <Auth0Provider
-    domain="sevilla.au.auth0.com"
-    clientId="OTRPv8mErB3lmux35OgHER6bMCpwJKKz"
-    redirectUri={window.location.origin}
-    audience="https://serverless-scala.com"
-    scope="read:all"
-  >
     <App />
-  </Auth0Provider>
   </React.StrictMode>,
   document.getElementById('root')
 );
