@@ -6,3 +6,4 @@ target/
 project/project
 .bsp
 .idea
+.terraform/
