@@ -25,8 +25,7 @@ function target_deploy() {
           --build-arg CHANNELS_IMAGE_NAME=$CHANNELS_IMAGE_NAME  \
           --build-arg AUTH_IMAGE_NAME=$AUTH_IMAGE_NAME  \
           --build-arg VERSION=$VERSION \
-          +package
-    earth 
+          +package 
 }
 
 if type -t "target_$1" &>/dev/null; then
