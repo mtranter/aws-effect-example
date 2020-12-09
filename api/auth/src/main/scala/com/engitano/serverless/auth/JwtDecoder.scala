@@ -11,7 +11,7 @@ import io.circe.generic.auto._
 import io.circe.parser.decode
 import pdi.jwt.Jwt
 
-case class JwtClaims(sub: String, iat: Option[Long], exp: Option[Long], iss: String, aud: String)
+case class JwtClaims(sub: String, iat: Option[Long], exp: Option[Long], iss: String, aud: List[String])
 
 trait JwtDecoder[F[_]] {
   def decodeToken(token: String): Either[AuthError, JwtClaims]

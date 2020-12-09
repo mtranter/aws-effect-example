@@ -31,11 +31,13 @@ trait JwkClient[F[_]] {
 }
 
 object JwkClient {
+
+  def fromJson[F[_]: Sync](j: JwkJson) = Sync[F].delay(Jwk.fromValues(j.toJava))
   def apply[F[_]: Sync](client: Client[F]): JwkClient[F] = new JwkClient[F] {
     def fetchJwks(jwkEndpoint: Uri): F[List[Jwk]] =
       client
         .expect[JwkEndpointDto](jwkEndpoint)
-        .flatMap { _.keys.traverse[F, Jwk](t => Sync[F].delay(Jwk.fromValues(t.toJava))) }
+        .flatMap { _.keys.traverse[F, Jwk](t => fromJson(t)) }
   }
 
 }
