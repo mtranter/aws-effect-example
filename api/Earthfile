@@ -1,4 +1,4 @@
-FROM hseeberger/scala-sbt:8u265_1.3.13_2.13.3
+FROM hseeberger/scala-sbt:11.0.8_1.3.13_2.13.3
 WORKDIR /build
 
 deps:
@@ -9,10 +9,32 @@ deps:
 
 build:
     FROM +deps
-    COPY src src
-    RUN sbt compile 
+    COPY --dir auth channels common ./
+    RUN sbt ";compile;test;assembly"
+    SAVE ARTIFACT ./channels/target/scala-2.13/lambda.jar ./channels.jar
+    SAVE ARTIFACT ./auth/target/scala-2.13/lambda.jar ./auth.jar
 
-deploy:
-    FROM +deps
-	COPY src src
-	RUN sbt proguard:proguard
+package-channels:
+    FROM public.ecr.aws/lambda/java:11.2020.12.03.17
+    ARG IMAGE_NAME
+    ARG VERSION
+    RUN mkdir ./lib
+	COPY +build/channels.jar ./lib/channels.jar
+    CMD ["com.engitano.serverless.channels.ChannelsApiGateway"]
+    SAVE IMAGE --push $IMAGE_NAME:$VERSION
+
+package-auth:
+    FROM public.ecr.aws/lambda/java:11.2020.12.03.17
+    ARG IMAGE_NAME
+    ARG VERSION
+    RUN mkdir ./lib
+	COPY +build/auth.jar ./lib/auth.jar
+    CMD ["com.engitano.serverless.auth.Authorizer"]
+    SAVE IMAGE --push $IMAGE_NAME:$VERSION
+
+package:
+    ARG CHANNELS_IMAGE_NAME
+    ARG AUTH_IMAGE_NAME
+    ARG VERSION
+    BUILD --build-arg IMAGE_NAME=$CHANNELS_IMAGE_NAME --build-arg VERSION=$VERSION +package-channels 
+    BUILD --build-arg IMAGE_NAME=$AUTH_IMAGE_NAME --build-arg VERSION=$VERSION +package-auth

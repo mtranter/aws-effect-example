@@ -1,6 +1,8 @@
 FROM node:12-stretch
 
 deps:
+    RUN mkdir /app
+    WORKDIR ./app
     COPY ./package.json ./
     COPY ./yarn.lock ./
     RUN yarn install
@@ -8,14 +10,12 @@ deps:
     SAVE ARTIFACT ./yarn.lock
     SAVE ARTIFACT ./node_modules ./node_modules 
 
-
-
 utest:
     FROM +deps
     COPY --dir ./src ./
     COPY --dir ./public ./
     COPY ./tsconfig.json ./
-    RUN yarn test
+    RUN CI=true yarn test
 
 package:
     FROM +utest

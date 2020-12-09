@@ -7,7 +7,7 @@ export interface Channel {
 
 export const ChannelsService = {
     getChannels: (authToken: string) => {
-        return fetch("https://k112rvlek9.execute-api.ap-southeast-2.amazonaws.com/dev/channels", {
+        return fetch("https://tpok76uzv3.execute-api.ap-southeast-1.amazonaws.com/v1/channels", {
             headers: {
                 Authorization: `Bearer ${authToken}`
             }

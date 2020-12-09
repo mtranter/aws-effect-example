@@ -5,9 +5,6 @@ provider:
     runtime: java8
     region: ap-southeast-2
 
-package:
-    artifact: 'target/scala-2.13/proguard/aws-effect-example_2.13-0.1.0-SNAPSHOT.jar'
-
 # layers:
 #     dependencies:
 #         path: java/lib
@@ -16,6 +13,8 @@ package:
 
 functions:
     api:
+        package:
+          artifact: 'channels/target/scala-2.13/proguard/channels-service_2.13-0.1.0-SNAPSHOT.jar'
         handler: com.engitano.serverless.channels.Channels
         # layers:
         #   - { Ref: DependenciesLambdaLayer }
@@ -57,9 +56,33 @@ functions:
                     identitySource: method.request.header.Authorization
                     type: token
     authorizerFunc:
+        package:
+          artifact: 'auth/target/scala-2.13/proguard/authorizer_2.13-0.1.0-SNAPSHOT.jar'
         handler: com.engitano.serverless.auth.Authorizer
 resources:
   Resources:
+    channelsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: Channels
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: topic
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        GlobalSecondaryIndexes:
+          - IndexName: ChannelsByTopic
+            KeySchema:
+            - AttributeName: topic
+              KeyType: HASH
+            - AttributeName: id
+              KeyType: RANGE
     GatewayResponseDefault4XX:
       Type: 'AWS::ApiGateway::GatewayResponse'
       Properties:
