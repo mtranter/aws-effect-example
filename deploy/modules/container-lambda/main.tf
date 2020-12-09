@@ -1,8 +1,11 @@
 
 variable "name" {}
 variable "image_uri" {}
+variable "timeout" {
+  default = 3
+}
 variable "memory_size" {
-  default = 128
+  default = 2048
 }
 variable "environment_vars" {
   type = map(string)
@@ -56,6 +59,7 @@ resource "aws_lambda_function" "function" {
   role          = aws_iam_role.iam_for_lambda.arn
   image_uri     = var.image_uri
   package_type  = "Image"
+  timeout = var.timeout
   memory_size   = var.memory_size
   environment {
     variables = length(var.environment_vars) == 0 ? null : var.environment_vars

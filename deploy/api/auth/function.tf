@@ -6,6 +6,7 @@ module "function" {
     JWKS_ENDPOINT = "https://aws-effect.au.auth0.com/.well-known/jwks.json"
   }
 
+  timeout = 20
   description = "AWS Effect Custom Authorizer"
   image_uri = var.image_uri
   name = "AwsEffectAuthorizer"

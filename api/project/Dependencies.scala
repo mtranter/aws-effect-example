@@ -18,6 +18,7 @@ object Dependencies {
     val pureConfigV        = "0.14.0"
     val refinedPureConfigV = "0.9.18"
     val circeV             = "0.13.0"
+    val log4catsV          = "1.1.1"
   }
 
   import Versions._
@@ -29,6 +30,7 @@ object Dependencies {
   val http4sServer      = "org.http4s"            %% "http4s-server"            % httpClientV
   val dynamoDB          = "com.engitano"          %% "dynamo-f"                 % dynamoDBV
   val jwk               = "com.auth0"              % "jwks-rsa"                 % auth0V
+  val logging           = "io.chrisdavenport"     %% "log4cats-slf4j"           % log4catsV
   val pureConfig        = "com.github.pureconfig" %% "pureconfig"               % pureConfigV
   val pureConfigHttp4s  = "com.github.pureconfig" %% "pureconfig-http4s"        % pureConfigV
   val pureConfigCats    = "com.github.pureconfig" %% "pureconfig-cats-effect"   % pureConfigV

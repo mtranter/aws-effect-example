@@ -8,7 +8,11 @@ const OidcConfiguration: UserManagerSettings = {
     authority: process.env["REACT_APP_OAUTH_URL"]!,
     silent_redirect_uri: `${window.location.protocol}//${window.location.host}/auth/callback/silent`,
     post_logout_redirect_uri: '/', // optional
+    extraQueryParams: {
+        audience: 'http://api.aws-effect.com.au'
+    },
     metadata: {
+        
         issuer: process.env["REACT_APP_OAUTH_ISSUER"]!,
         jwks_uri: `${process.env["REACT_APP_OAUTH_URL"]}/.well-known/jwks.json`,
         authorization_endpoint: `${process.env["REACT_APP_OAUTH_URL"]}/authorize`,
