@@ -10,6 +10,7 @@ import com.auth0.jwk.Jwk
 import io.circe.generic.auto._
 import io.circe.parser.decode
 import pdi.jwt.Jwt
+import pdi.jwt.JwtOptions
 
 case class JwtClaims(sub: String, iat: Option[Long], exp: Option[Long], iss: String, aud: List[String])
 
@@ -43,7 +44,7 @@ object JwtDecoder {
         decode[HasKeyId](json).map(_.kid).leftMap(e => InvalidToken("Cannot parse token header", Some(e)))
       }
 
-  def apply[F[_]: Sync](jwks: List[Jwk]): JwtDecoder[F] =
+  def apply[F[_]: Sync](jwks: List[Jwk], opts: JwtOptions = JwtOptions.DEFAULT): JwtDecoder[F] =
     new JwtDecoder[F] {
 
       def _decodeToken(jwks: List[Jwk], token: String): Either[AuthError, JwtClaims] = {
@@ -54,7 +55,7 @@ object JwtDecoder {
               .toRight(UnknownJwtKeyId)
               .flatMap { jwk =>
                 Jwt
-                  .decode(token, jwk.getPublicKey())
+                  .decode(token, jwk.getPublicKey(), opts)
                   .toEither
                   .leftMap(t => InvalidToken("Signing Error", Some(t)))
               }.flatMap(j => decode[JwtClaims](j.content).leftMap(e => InvalidToken("Invalid Token", Some(e))))

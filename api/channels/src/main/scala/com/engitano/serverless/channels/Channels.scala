@@ -35,6 +35,6 @@ object ChannelsConfig {
 class ChannelsApiGateway extends IOHttp4sLambda {
   def lambdaHandler(blocker: Blocker, key: Key[LambdaRequestParams]) =
     ChannelsConfig.load(blocker).flatMap { cfg =>
-      cfg.repoConfig.buildRepository().map(r => CORS(ChannelRoutes(r).orNotFound))
+      cfg.repoConfig.buildRepository().map(r => CORS(ChannelRoutes(r, key).orNotFound))
     }
 }

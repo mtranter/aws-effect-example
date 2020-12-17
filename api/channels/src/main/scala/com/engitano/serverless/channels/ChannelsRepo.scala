@@ -11,7 +11,9 @@ import com.engitano.dynamof.formats.auto._
 import com.engitano.serverless.channels.ChannelRoutes.ListChannelsResponse
 import com.engitano.serverless.dynamo.DynamoDBConfig
 import eu.timepit.refined.auto._
+import eu.timepit.refined.refineV
 import eu.timepit.refined.types.string
+import eu.timepit.refined.collection.NonEmpty
 import eu.timepit.refined.types.string._
 
 trait ChannelsRepo[F[_]] {
@@ -50,7 +52,7 @@ object ChannelsRepo {
       val topicsIndex   = channelsTable.globalSecondaryIndex(config.channelsByTopicIndexName.value, 'topic, 'subscriberCount)
 
       override def createChannel(c: Channel): IO[Unit] =
-        channelsTable.put(ChannelPersistence(c.id, c.topic, 0, c)).eval(interpreter)
+        channelsTable.put(ChannelPersistence(c.id, refineV[NonEmpty].unsafeFrom(c.topic.value.toLowerCase()), 0, c)).eval(interpreter)
 
       override def getChannel(id: string.NonEmptyString): IO[Option[Channel]] =
         channelsTable.get(id).eval(interpreter).map(_.map(_.channel))

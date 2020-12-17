@@ -19,18 +19,21 @@ import org.http4s.circe.CirceEntityEncoder._
 import org.http4s.dsl.impl.OptionalQueryParamDecoderMatcher
 import org.http4s.dsl.io._
 import org.http4s.headers.Location
+import io.chrisdavenport.vault.Key
+import com.engitano.awseffect.lambda.http4s.LambdaRequestParams
 
 object ChannelRoutes {
 
+  def toLower(nes: NonEmptyString) = refineV[NonEmpty].unsafeFrom(nes.value.toLowerCase())
+
   case class ListChannelsResponse(channels: List[Channel], nextToken: Option[Int])
   case class CreateChannelRequest(
-      creator: NonEmptyString,
       description: NonEmptyString,
       topic: NonEmptyString,
       `private`: Boolean,
       isArchived: Boolean
   ) {
-    def toChannel(id: NonEmptyString) = Channel(id, creator, description, topic, `private`, isArchived)
+    def toChannel(id: NonEmptyString, creator: NonEmptyString) = Channel(id, creator, description, toLower(topic), `private`, isArchived)
   }
 
   implicit val nonEmptyStringDecoder = QueryParamDecoder[String].emap(s => refineV[NonEmpty](s).leftMap(e => ParseFailure(s, e)))
@@ -41,16 +44,25 @@ object ChannelRoutes {
 
   private object LastKeyQueryParamMatcher extends OptionalQueryParamDecoderMatcher[Int]("lastKey")
 
-  def apply(repo: ChannelsRepo[IO]): HttpRoutes[IO] =
+  def apply(repo: ChannelsRepo[IO], key: Key[LambdaRequestParams]): HttpRoutes[IO] =
     HttpRoutes
       .of[IO] {
         case GET -> Root / "channels" / NonEmptyStringVar(id) =>
           repo.getChannel(id).flatMap(r => Ok(r))
         case GET -> Root / "channels" / "topic" / NonEmptyStringVar(topic) :? LastKeyQueryParamMatcher(key) =>
-          repo.listChannelsByTopic(topic, key).flatMap(r => Ok(r))
+          repo.listChannelsByTopic(toLower(topic), key).flatMap(r => Ok(r))
         case req @ POST -> Root / "channels" =>
           (getId(), req.as[CreateChannelRequest]).tupled.flatMap { case (id, c) =>
-            repo.createChannel(c.toChannel(id)).flatMap(_ => Created(Location(Uri.uri("/channels") / id.value)))
+            req.attributes
+              .lookup(key)
+              .flatMap(_.proxyRequest.requestContext.authorizer)
+              .flatMap(_.get[String]("email"))
+              .flatMap(e => refineV[NonEmpty](e).toOption) match {
+              case Some(e) =>
+                repo.createChannel(c.toChannel(id, e)).flatMap(_ => Created(Location(Uri.uri("/channels") / id.value)))
+              case None => InternalServerError()
+            }
+
           }
       }
 }

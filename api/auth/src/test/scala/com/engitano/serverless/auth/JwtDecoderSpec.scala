@@ -8,6 +8,7 @@ import wordspec.AnyWordSpec
 import cats.effect.IO
 import io.circe.parser.decode
 import io.circe.generic.auto._
+import pdi.jwt.JwtOptions
 
 object Json {
   val JWK_JSON = """[
@@ -41,7 +42,7 @@ class JwtDecoderSpec extends AnyWordSpec with should.Matchers {
   "The Decoder" should {
     "decode a valid token" in {
       val keys = decode[List[JwkJson]](Json.JWK_JSON).right.get.traverse(JwkClient.fromJson[IO]).unsafeRunSync()
-      val decoder = JwtDecoder[IO](keys)
+      val decoder = JwtDecoder[IO](keys, JwtOptions(expiration = false))
       val result = decoder.decodeToken("eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlpfVXR5MnZ1bUVuTTBQRjlDQW1uWSJ9.eyJpc3MiOiJodHRwczovL2F3cy1lZmZlY3QuYXUuYXV0aDAuY29tLyIsInN1YiI6Imdvb2dsZS1vYXV0aDJ8MTEwMzc0OTE3MzYxMjEyMTM4MzY0IiwiYXVkIjpbImh0dHA6Ly9hcGkuYXdzLWVmZmVjdC5jb20uYXUiLCJodHRwczovL2F3cy1lZmZlY3QuYXUuYXV0aDAuY29tL3VzZXJpbmZvIl0sImlhdCI6MTYwNzQ4NjkzOCwiZXhwIjoxNjA3NTczMzM4LCJhenAiOiIzSDNYMnNaVnF4RnNCNWczVGgyZUJWTmx5clpOZ0NNaiIsInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwifQ.qPRkxMP0CHxBSlBQ1znIsYZroKRFLo_47vFXdlIkPgsBqx8SFWUo60iw6GtAQXJGjzcuim64lOJ65U-ZxdP7u79oNOdArmKOGY0637GuRl9iPdiB0Jo7KNPu6D42RLWJ3IWa1McwqhpUqnfmW_CTphIyRrnZQ9biUpAJqX25sPcnIoetvvblwXX8WGuxCLCeQ7DtBnii4sxt9aZlbhc3ous3SjVB7_I-qTc6igC_hJBMgp-Mi8colT6grNwvwTeLqbkE1LTi2bMjGVokevGEKVPa1PqLn5P7dT45itQogjNFBE499PJKOsRRDNPaiBhV0zW7YN_77mxU0X4caIE9tA")
    
       result should matchPattern {

@@ -26,6 +26,9 @@ function target_deploy() {
           --build-arg AUTH_IMAGE_NAME=$AUTH_IMAGE_NAME  \
           --build-arg VERSION=$VERSION \
           +package 
+    pushd ./deploy
+    terragrunt apply -auto-approve -var auth_image_uri="${AUTH_IMAGE_NAME}:${VERSION}" -var channels_image_uri="${CHANNELS_IMAGE_NAME}:${VERSION}"
+    popd
 }
 
 if type -t "target_$1" &>/dev/null; then
