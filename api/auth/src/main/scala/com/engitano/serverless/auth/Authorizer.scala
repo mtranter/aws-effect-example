@@ -52,9 +52,13 @@ trait Auth0Client {
   def getUserInfo(token: String): IO[UserInfo]
 }
 object Auth0Client {
+  implicit def unsafeLogger = Slf4jLogger.getLogger[IO]
   def apply(client: Client[IO], baseUri: Uri) = new Auth0Client {
     def getUserInfo(token: String): IO[UserInfo] = client
-      .expect[UserInfo](Request[IO](uri = baseUri / "userinfo", headers = Headers.of(Authorization(Token(AuthScheme.Basic, token)))))
+      .expect[UserInfo](Request[IO](uri = baseUri / "userinfo", headers = Headers.of(Authorization(Token(AuthScheme.Bearer, token)))))
+      .handleErrorWith(t => {
+        Logger[IO].error(t)("Error requesting user info") *> IO.raiseError(t)
+      })
   }
 
 }
