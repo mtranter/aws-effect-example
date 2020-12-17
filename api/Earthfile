@@ -29,7 +29,7 @@ package-auth:
     ARG VERSION
     RUN mkdir ./lib
 	COPY +build/auth.jar ./lib/auth.jar
-    CMD ["com.engitano.serverless.auth.Authorizer"]
+    CMD ["com.engitano.serverless.auth.AuthorizerHandler"]
     SAVE IMAGE --push $IMAGE_NAME:$VERSION
 
 package:
